@@ -113,7 +113,7 @@
 
 ![KaleidoBERT](images/kaleidoBERT.png)
 
-备注：论文中的实验表格做的不错，相当于模型综述了
+> *论文中的实验表格做的不错，相当于模型综述了*
 
 ### 5. Pixel-BERT: Aligning Image Pixels with Text by Deep Multi-Modal Transformers
 
@@ -207,9 +207,82 @@
 
 ---
 
+* 主要目标，将文本、图片联合训练转到BERT的统一格式了；模型简单，效率高；
+* 模型结构
+  * 图emb
+  * 文emb
+  * 图文cross encoder
+  
+* 训练方法
+  * ITM(image text matching)，包含WPA(word patch alignment操作)，这里效仿了UNITER中都WRA，使用的都是optimal transports方法，计算两个分布之间的最小转换代价[zhihu link](https://zhuanlan.zhihu.com/p/82424946)
+  * MLM(whole word masking, 这都不算啥创新点，凑字数)
+  * IA(image augment) during fine-tuning
+
+>（思想到没啥新鲜感、多模态的论文都没啥新鲜感，连积木都懒得拼了）
+
+![vilt-d](images/ViLT_d.png)
+
+![vilt](images/ViLT.png)
+
+### 10. InterBERT: Vision-and-Language Interaction for Multi-modal Pretraining
+
+* KDD 2020
+* [paper]()
 
 
 
+
+### 11. Oscar:
+
+
+
+### 12. CLIP
+
+
+### 13. UNIMO
+
+
+### 14. Seeing Out of tHe bOx: 
+
+* CVPR 2021 oral
+* [paper](https://arxiv.org/abs/2104.03135)
+* [code](https://github.com/researchmm/soho)
+
+
+
+### 15. VinVL
+
+* CVPR 2021
+* [paper](https://arxiv.org/abs/2101.00529)
+* [code](https://github.com/pzzhang/VinVL)
+
+
+### 16. Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision
+
+* ICML 2021
+* [paper](https://arxiv.org/abs/2102.05918)
+
+### 17. E2E-VLP: End-to-End Vision-Language Pre-training Enhanced by Visual Learning
+
+* ACL 2021
+* [paper](https://arxiv.org/abs/2106.01804)
+
+
+### 18. MURAL: Multimodal, Multitask Retrieval Across Languages
+
+* EMNLP 2021
+* [paper](https://arxiv.org/abs/2109.05125)
+
+
+
+### 19. Large-Scale Adversarial Training for Vision-and-Language Representation Learning
+
+* NeurIPS 2020
+
+
+### 20. UNIMO: Towards Unified-Modal Understanding and Generation via Cross-Modal Contrastive Learning
+
+* ACL 2021
 
 
 
