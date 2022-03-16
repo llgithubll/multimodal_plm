@@ -2,7 +2,89 @@
 
 ## TODO
 
-* https://arxiv.org/abs/2109.10246
+## Idea
+
+### 胡思乱想1
+
+结合CLIP和Prompt学习；knowledge prompt image；
+
+* [KnowPrompt & OntoPrompt](https://mp.weixin.qq.com/s/HPQ8AjoVN6UsHZdag1-xZw)
+* [PromptPapers](https://github.com/thunlp/PromptPapers)
+* [多模态中的prompt](https://mp.weixin.qq.com/s/hegK-Aut8s6KfYIe-glgag)
+* [多模态最新方向：各种问题，细分方向](https://zhuanlan.zhihu.com/p/389287751)
+
+知识提示的问题：
+1. 如何高效地植入外部知识，构建提示模板和标签映射？
+2. 并不是所有外部知识都有帮助，如何解决知识噪音和异构性问题？
+
+---
+
+* `[cls]` image `[sep]` the **itemcate** **proporty** is `?`?
+* `[cls]` image `[sep]` the type of **itemcate_level1** is `?`?
+* `[cls]` image `[sep]` the color of t-shirt in picture is `?(red, black, unkonwn)`
+
+商品理解、cpv这种内容，可以用来构建prompt句式；句式就直接问非id类型（品牌、型号）的属性（颜色、款式）
+
+一问品类、二问属性
+
+property prompt in ecommerce multimodal pretrain
+
+visual question answering 建模 prompt：给定一个图像，根据标题或cpv中的属性 来构造问题；（prompt or vqa)
+1. 问什么问题
+  * 什么问题是可以根据图片回答的？（哪些属性、答不出来怎么处理；品类可以问，死马当活马医）
+  * 怎么去构造比较干净的问题（prompt）
+  * 问：
+    * 是什么
+    * 卖什么
+    * 有什么
+    * XX属性是什么
+    用另一模态辅助
+      以mask的方式回答即可？或者利用 encode-decode架构；将MAE的decode替换为bert，decode内容替换为答案。
+2. 图片问题
+  * 淘宝商品的主图 和 真实的拍照实物图 有些区别；淘宝商品图通常是做了加工的（比如配上文字、排版等），会包含很多辅助信息
+  * 相当多（相当多）的图片上包含文本信息（顺丰包邮、品牌名，巴拉巴拉）
+  * 主体识别（加大主体mask概率：留石），忽略背景、排版、文字的影响，单流模型 or 其他
+  * 
+
+
+---
+
+阶段1: 三组对比， Query-Title, Query-Image, Title-Image
+阶段2:
+* prompt 双流 交互；答案直接mask就ok
+* prompt 单流，图片用VIT，问题用BERT，结构是encode-decode，MAE的decode替换为bert，且用来回答问题
+
+
+* [阿里小蜜VQA](https://ata.alibaba-inc.com/articles/173749?spm=ata.23639746.0.0.3a843565f75afS)
+
+
+### 胡思乱想2
+
+现在多模态训练的任务都是初级的任务；比如 image-text match, image-text contrastive; 并包含单模态的经典学习任务，比如 mlm, mim等；
+
+就学习而言，判别任务更直接，也相对容易；为了让模型获取更高high level的理解能力；通过生成的方式，让模态之间互相提示。
+
+text2image (VAE, GAN) 
+
+image caption([image captioning](https://proceedings.neurips.cc/paper/2019/file/680390c55bbd9ce416d1d69a9ab4760d-Paper.pdf))
+
+主要问题
+1. 两个生成任务应该都非常hard
+2. 淘宝商品中的主图和标题，并非所见即所说的关系，存在一定比例辅助或不相关的信息；
+
+
+### 胡思乱想3
+
+
+图文联合训练，加入推理 Video-Language Inference
+
+对于一个商品。image 根据 标题、cpv内容推理图片内 关系、实体； 标题、cpv根据 image 内容 推理image中物体的关系（VCR） 最后得到联合表示（对齐模型）
+
+主要问题：
+1. 图片中可能不存在关系 或 关系太难界定
+2. 图片中描述与展示性的内容居多，关系内容很少 
+
+
 
 
 ## Survey
@@ -397,6 +479,33 @@ image-caption pairs和translation pairs对于跨语言深度学习至关重要
 * [paper]()
 
 
+### 21. Unified Multimodal Pre-training and Prompt-based Tuning for Vision-Language Understanding and Generation
+
+* [paper](https://arxiv.org/abs/2112.05587)
+
+---
+
+![UniVL](images/UniVL.png)
+
+
+### 22. CLIP-Event: Connecting Text and Images with Event Structures
+
+* [paper](https://arxiv.org/abs/2201.05078)
+* [code](https://github.com/limanling/clip-event)
+
+---
+
+**动机**
+
+以往的V+L方法，通过对齐image, text学习到多模态表示。并主要关注图像目标与文本中实体之间的对齐，没有关注events、参与者之间的关系（精细理解）
+
+---
+
+* 训练方法
+  * 对比学习+prompt
+  * 
+
+---
 
 ## MISC & Other
 
@@ -404,6 +513,39 @@ image-caption pairs和translation pairs对于跨语言深度学习至关重要
 
 * EMNLP 2021
 * [paper](https://arxiv.org/abs/2109.10246)
+
+
+### BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation
+
+* [paper](https://arxiv.org/abs/2201.12086)
+* [code](https://github.com/salesforce/BLIP)
+
+---
+**动机** ？没有去解决特定的问题；但是换了一种方式，将多模态的模型融合了（原来要么是单塔、要么是双塔）
+本文是图像encoder接上文本encoder，并在文本encoder中集成了cross-attention，融合两种模态内容；（模型层面的融合）
+
+
+---
+
+* 训练方法
+  * 模型级联的方式
+    * part1 先使用image encoder对图片编码
+    * part2 再用text encoder对文本进行编码
+    * part1 和 part2 之间 使用ITC(image-text contrastive loss)训练
+    * part1 和 part2 进行融合，多了个 cross-attention 模块，用来将图文模态表示合并；
+      * 使用图文匹配任务进行训练 (image-text matching loss)
+      * 使用语言模型(language modeling loss)任务来适配文本生成任务ß
+
+![BLIP gif](images/BLIP.gif)
+
+![BLIP](images/BLIP.png)
+
+---
+
+
+
+
+
 
 
 
