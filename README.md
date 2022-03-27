@@ -12,6 +12,7 @@
 * [PromptPapers](https://github.com/thunlp/PromptPapers)
 * [多模态中的prompt](https://mp.weixin.qq.com/s/hegK-Aut8s6KfYIe-glgag)
 * [多模态最新方向：各种问题，细分方向](https://zhuanlan.zhihu.com/p/389287751)
+* [后prompt时代](https://mp.weixin.qq.com/s/EOJGIXSo7bj7oi0nqbbMlw)
 
 知识提示的问题：
 1. 如何高效地植入外部知识，构建提示模板和标签映射？
@@ -84,6 +85,28 @@ image caption([image captioning](https://proceedings.neurips.cc/paper/2019/file/
 1. 图片中可能不存在关系 或 关系太难界定
 2. 图片中描述与展示性的内容居多，关系内容很少 
 
+
+### 胡思乱想4
+
+（魔改模型，模态融合，todo:3.26）
+
+![self-attention(li-hong-yi)](images/self_attention.png)
+
+再执行transformers层时，单流模型（比如 fashionbert）图文两种模态会无差别的进行self-attention；
+即图中的patch 和 文中的 word；他们通过相同的线性层映射到 q, k, v; 然后细分多份head(q, k, v)；
+此时的q, k, v将进行self-attention操作，给定元素的q会和序列中其他的所有k进行相关性计算（点积），
+这样会导致 dot(q(w1),k(w2)) & dot(q(w1),k(i1)) & dot(q(i2),k(i1)) 并存，
+即 w1 和 w2, i1 都要进行相似度计算；并以此衡量 w1 和 w2、i1 的相似度；但w 和 i 本是两种不同的模态，这种计算会使得两种模态混合（不是融合，没有区分特点）（同理, i1 和 w1, i2，被进行相似度计算）
+（区分图文的唯一信息来源是 底层输入的token_type_ids， **w和i的表示不完全兼容，直接相似度计算，得到的信息(权重)不够精确**）
+
+*新方法，w和w之间使用正常self-attention交互，w和i之间通过映射关系h变换后，进行正常self-attention：w+h->w', w'与交互；同理i-h=i' i'与w进行交互*
+（tranE的思想直观上远比transD合适)
+
+![multi-head attention(li-hong-yi)](images/multi-head_attention.png)
+
+（新坑啊，模型模态融合；参考下blip: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation）
+
+---
 
 
 
